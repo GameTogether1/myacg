@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>外网ACG - GameTogether</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        accent: '#ec4899',
+                        dark: '#0f172a',
+                        'dark-light': '#1e293b',
+                        'dark-lighter': '#334155',
+                        'neon-blue': '#00f3ff',
+                        'neon-purple': '#bf00ff',
+                        'neon-pink': '#ff00a0'
+                    },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'shake': 'shake 0.5s ease-in-out',
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'slide-up': 'slideUp 0.4s ease-out',
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                    },
+                    keyframes: {
+                        float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+                        glow: { '0%': { boxShadow: '0 0 5px rgba(99,102,241,0.5)' }, '100%': { boxShadow: '0 0 20px rgba(99,102,241,0.8)' } },
+                        shake: { '0%,100%': { transform: 'translateX(0)' }, '25%': { transform: 'translateX(-5px)' }, '75%': { transform: 'translateX(5px)' } },
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { transform: 'translateY(30px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        pulseGlow: { '0%, 100%': { boxShadow: '0 0 5px #00f3ff, 0 0 10px #00f3ff' }, '50%': { boxShadow: '0 0 20px #00f3ff, 0 0 30px #00f3ff' } }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-dark text-white font-sans antialiased">
+
+    <div class="bg-animation"><div class="gradient"></div><div class="dots"></div></div>
+
+    <nav class="bg-dark-light bg-opacity-80 sticky top-0 z-50 border-b border-dark-lighter backdrop-blur-md">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-gamepad text-primary text-3xl"></i>
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">一块ACG</h1>
+            </div>
+            <div id="auth-section">
+                <button id="login-btn" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-2 px-6 rounded-full transition-all hover:shadow-neon-blue flex items-center btn-shine">
+                    <i class="fa fa-user-circle mr-2"></i> 登录
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8">
+        <div class="flex flex-wrap gap-3 mb-8 justify-center" id="tag-filters">
+            <button class="tag-pill active px-4 py-2 rounded-full bg-primary text-white" data-tag="all">全部游戏</button>
+            <button class="tag-pill px-4 py-2 rounded-full bg-dark-lighter text-white hover:bg-primary transition-colors" data-tag="搜集">搜集</button>
+            <button class="tag-pill px-4 py-2 rounded-full bg-dark-lighter text-white hover:bg-primary transition-colors" data-tag="视觉小说">视觉小说</button>
+            <button class="tag-pill px-4 py-2 rounded-full bg-dark-lighter text-white hover:bg-primary transition-colors" data-tag="生存">生存</button>
+            <button class="tag-pill px-4 py-2 rounded-full bg-dark-lighter text-white hover:bg-primary transition-colors" data-tag="Unity">Unity</button>
+            <button class="tag-pill px-4 py-2 rounded-full bg-dark-lighter text-white hover:bg-primary transition-colors" data-tag="RPG">RPG</button>
+            <button class="tag-pill px-4 py-2 rounded-full bg-dark-lighter text-white hover:bg-primary transition-colors" data-tag="其它">其它</button>
+        </div>
+
+        <!-- 注意：这里不再使用 columns 类，改为普通块容器，用于纵向堆叠批次 -->
+        <div id="gamesGrid" class="games-grid-container"></div>
+
+        <div class="flex justify-center mt-12">
+            <button id="loadMoreBtn" class="px-8 py-3 rounded-full bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-accent transition-all duration-300 flex items-center space-x-2 transform hover:scale-105 shadow-lg">
+                <i class="fa fa-refresh"></i><span>加载更多游戏</span>
+            </button>
+        </div>
+    </main>
+
+    <!-- 其余模态框和弹窗保持不变，省略避免重复 -->
+    <div id="gameModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-backdrop absolute inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="bg-dark-light rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
+                <div class="relative">
+                    <button id="closeModal" class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-dark-lighter hover:bg-primary transition-colors"><i class="fa fa-times"></i></button>
+                    <h2 id="modalTitle" class="text-2xl font-bold p-6 border-b border-dark-lighter text-center bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"></h2>
+                    <div class="relative p-6">
+                        <button id="prevImage" class="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-dark-lighter hover:bg-primary"><i class="fa fa-chevron-left"></i></button>
+                        <div id="previewImageContainer" class="w-full max-h-96 flex justify-center"><img id="previewImage" class="max-w-full max-h-96 object-contain rounded-lg"></div>
+                        <button id="nextImage" class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-dark-lighter hover:bg-primary"><i class="fa fa-chevron-right"></i></button>
+                        <div id="imageCounter" class="text-center mt-2 text-gray-400">1/1</div>
+                    </div>
+                    <div class="p-6 border-t border-dark-lighter flex justify-center space-x-6">
+                        <a id="quark-link" href="#" target="_blank" class="download-btn px-6 py-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 transition flex items-center space-x-2"><i class="fa fa-cloud-download"></i><span>夸克网盘</span></a>
+                        <a id="thunder-link" href="#" target="_blank" class="download-btn px-6 py-3 rounded-full bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 transition flex items-center space-x-2"><i class="fa fa-bolt"></i><span>迅雷网盘</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed top-20 right-4 z-[9999] flex flex-col gap-2"></div>
+
+    <div id="auth-modal" class="fixed inset-0 z-[60] hidden">
+        <div id="auth-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity opacity-0"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+            <div id="auth-modal-content" class="glass-effect rounded-2xl w-full max-w-md transform scale-95 opacity-0 transition-all duration-300 pointer-events-auto overflow-hidden">
+                <div class="p-6">
+                    <div class="flex gap-4 mb-6 border-b border-gray-700">
+                        <button id="tab-login" class="tab-btn pb-2 text-white font-semibold border-b-2 border-primary">登录</button>
+                        <button id="tab-register" class="tab-btn pb-2 text-gray-400 font-semibold">注册</button>
+                    </div>
+                    <div id="login-form" class="auth-form">
+                        <form id="login-form-element" class="space-y-4">
+                            <input type="email" id="login-email" placeholder="电子邮箱" class="w-full px-4 py-3 rounded-xl bg-dark/50 border border-gray-700 text-white focus:border-primary outline-none">
+                            <input type="password" id="login-password" placeholder="密码" class="w-full px-4 py-3 rounded-xl bg-dark/50 border border-gray-700 text-white focus:border-primary outline-none">
+                            <div class="text-right text-sm"><a href="#" id="forgot-password-link" class="text-neon-blue hover:underline">忘记密码？</a></div>
+                            <button type="submit" id="login-submit" class="w-full py-3 rounded-xl bg-primary hover:bg-secondary transition font-bold">登录</button>
+                            <div id="login-loading" class="hidden text-center">处理中...</div>
+                        </form>
+                    </div>
+                    <div id="register-form" class="auth-form hidden">
+                        <form id="register-form-element" class="space-y-4">
+                            <input type="email" id="register-email" placeholder="电子邮箱" class="w-full px-4 py-3 rounded-xl bg-dark/50 border border-gray-700 text-white focus:border-primary outline-none">
+                            <input type="password" id="register-password" placeholder="密码（至少6位）" class="w-full px-4 py-3 rounded-xl bg-dark/50 border border-gray-700 text-white focus:border-primary outline-none">
+                            <input type="password" id="register-confirm-password" placeholder="确认密码" class="w-full px-4 py-3 rounded-xl bg-dark/50 border border-gray-700 text-white focus:border-primary outline-none">
+                            <button type="submit" id="register-submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90 transition font-bold">立即注册</button>
+                            <div id="register-loading" class="hidden text-center">处理中...</div>
+                        </form>
+                    </div>
+                    <div id="form-toggle-text" class="text-center text-gray-400 text-sm mt-6"></div>
+                </div>
+                <button id="close-auth-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa fa-times"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

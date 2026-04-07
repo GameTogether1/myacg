@@ -1,0 +1,169 @@
+/* 自定义动画和玻璃效果 */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+@keyframes dotsMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(30px, 30px); }
+}
+.bg-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+.bg-animation .gradient {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background: linear-gradient(45deg, #6366f1, #8b5cf6, #ec4899, #6366f1);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    opacity: 0.3;
+}
+.bg-animation .dots {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+    animation: dotsMove 20s linear infinite;
+}
+.glass-effect {
+    background: rgba(30, 41, 59, 0.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.tag-pill {
+    transition: all 0.2s ease;
+}
+.tag-pill:hover, .tag-pill.active {
+    transform: scale(1.05);
+}
+.game-card {
+    transition: all 0.3s ease;
+    break-inside: avoid;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: #1e293b;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    cursor: pointer;
+}
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.5), 0 0 30px rgba(0, 243, 255, 0.2);
+    border-color: #00f3ff;
+}
+.game-cover {
+    width: 100%;
+    height: auto;           /* 高度自适应，由图片原始比例决定 */
+    display: block;
+    transition: transform 0.3s ease;
+}
+.game-card:hover .game-cover {
+    transform: scale(1.02);
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.shake-animation {
+    animation: shake 0.5s ease-in-out;
+}
+@keyframes shake {
+    0%,100%{ transform: translateX(0); }
+    25%{ transform: translateX(-5px); }
+    75%{ transform: translateX(5px); }
+}
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+::-webkit-scrollbar-thumb {
+    background: #6366f1;
+    border-radius: 10px;
+}
+#previewImage {
+    transition: opacity 0.2s;
+}
+
+/* 会员弹窗和按钮样式 */
+.loading-spinner {
+    border: 2px solid rgba(255,255,255,0.1);
+    border-top-color: #00f3ff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.btn-shine {
+    position: relative;
+    overflow: hidden;
+}
+.btn-shine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s;
+}
+.btn-shine:hover::before {
+    left: 100%;
+}
+.tab-active {
+    background: linear-gradient(90deg, #00f3ff, #bf00ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+}
+.tab-active::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #00f3ff, #bf00ff);
+    box-shadow: 0 0 10px #00f3ff;
+}
+.input-glow:focus {
+    box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.3), 0 0 20px rgba(0, 243, 255, 0.2);
+}
+.input-glow-purple:focus {
+    box-shadow: 0 0 0 2px rgba(191, 0, 255, 0.3), 0 0 20px rgba(191, 0, 255, 0.2);
+}
+.tree-animation {
+    animation: treeShrink 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes treeShrink {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0) rotate(180deg);
+        transform-origin: center;
+    }
+}
+/* 批次容器之间的间距，与卡片间距一致（2rem） */
+.waterfall-batch {
+    margin-bottom: 2rem;
+}
+.waterfall-batch:last-child {
+    margin-bottom: 0;
+}
