@@ -1,6 +1,7 @@
 /**
  * 认证模块 - 处理用户登录、注册、密码修改、会员系统等功能
  * 已修复自动登录问题：登录后刷新自动保持登录，退出后才清除会话
+ * 已修复注册误报问题：移除不可靠的邮箱预检查，让 Supabase 直接返回正确错误
  */
 
 const SUPABASE_URL = 'https://szeedpcuharbupkjrnob.supabase.co';
@@ -238,28 +239,6 @@ async function fetchUserProfile() {
     } catch(e) { currentUserProfile = { is_member: false }; }
 }
 
-// 检查邮箱是否存在
-async function checkEmailExists(email) {
-    try {
-        const { error } = await supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: 'this_is_a_wrong_password_for_testing_12345'
-        });
-        if (error) {
-            if (error.message.includes('Invalid login credentials')) {
-                return { exists: true, confirmed: true };
-            }
-            if (error.message.includes('Email not confirmed')) {
-                return { exists: true, confirmed: false };
-            }
-            return { exists: false, confirmed: false };
-        }
-        return { exists: false, confirmed: false };
-    } catch (error) {
-        return { exists: false, confirmed: false };
-    }
-}
-
 // 检查登录状态（自动恢复会话，不清除存储）
 async function checkAuthStatus() {
     if (!supabaseClient) { updateUIForLoggedOutUser(); return; }
@@ -284,47 +263,103 @@ async function handleLogin(e){
         if(error) throw error;
         currentUser = data.user; await fetchUserProfile();
         showToast('登录成功','success'); updateUIForLoggedInUser(); closeAuthModal();
-    } catch(err){ showToast(err.message.includes('Invalid')?'邮箱或密码错误':err.message,'error'); shakeForm(elements.loginFormElement); }
+    } catch(err){ 
+        let errorMsg = err.message;
+        if (errorMsg.includes('Invalid login credentials')) {
+            errorMsg = '邮箱或密码错误';
+        } else if (errorMsg.includes('Email not confirmed')) {
+            errorMsg = '请先验证邮箱后再登录';
+        }
+        showToast(errorMsg, 'error'); 
+        shakeForm(elements.loginFormElement); 
+    }
     finally{ setButtonLoading(elements.loginSubmit, elements.loginLoading, false, '登录'); }
 }
 
 async function handleRegister(e){
     e.preventDefault();
     if (!supabaseClient) { showToast('系统离线','error'); return; }
-    const email = elements.registerEmail.value;
+    
+    const email = elements.registerEmail.value.trim().toLowerCase();
     const pwd = elements.registerPassword.value;
     const confirm = elements.registerConfirmPassword.value;
     
-    if(pwd !== confirm){ showToast('两次密码不一致','error'); shakeForm(elements.registerFormElement); return; }
-    if(pwd.length<6){ showToast('密码至少6位','error'); return; }
-    
-    // 检查邮箱是否已存在
-    const { exists, confirmed } = await checkEmailExists(email);
-    if (exists) {
-        if (confirmed) {
-            showToast('该邮箱已注册，请直接登录', 'error');
-        } else {
-            showToast('该邮箱已注册但未验证，请前往邮箱确认邮件', 'warning');
-        }
+    // 前端验证
+    if(pwd !== confirm){ 
+        showToast('两次密码不一致','error'); 
+        shakeForm(elements.registerFormElement); 
+        return; 
+    }
+    if(pwd.length < 6){ 
+        showToast('密码至少需要6位','error'); 
         shakeForm(elements.registerFormElement);
-        return;
+        return; 
+    }
+    if(!email){ 
+        showToast('请输入邮箱地址','error'); 
+        return; 
     }
     
     setButtonLoading(elements.registerSubmit, elements.registerLoading, true, '注册');
+    
     try {
-        const { data, error } = await supabaseClient.auth.signUp({ email, password:pwd });
-        if(error) throw error;
-        if(data.user && supabaseClient) {
-            await supabaseClient.from('GameTogether').insert([{ id:data.user.id, email, is_member:false, created_at:getCurrentTimestamp() }]);
+        // 直接调用 Supabase 注册，让它返回正确的错误信息
+        const { data, error } = await supabaseClient.auth.signUp({ 
+            email: email, 
+            password: pwd
+        });
+        
+        // 处理注册错误
+        if(error) {
+            let errorMsg = error.message;
+            
+            // 用户友好的错误提示
+            if (errorMsg.includes('User already registered')) {
+                errorMsg = '该邮箱已被注册，请直接登录';
+            } else if (errorMsg.includes('Password should be at least 6 characters')) {
+                errorMsg = '密码长度至少需要6位';
+            } else if (errorMsg.includes('Invalid email')) {
+                errorMsg = '邮箱格式不正确，请输入有效的邮箱地址';
+            } else if (errorMsg.includes('rate limit')) {
+                errorMsg = '操作过于频繁，请稍后再试';
+            }
+            
+            showToast(errorMsg, 'error');
+            shakeForm(elements.registerFormElement);
+            return;
         }
-        showToast('注册成功，请查收验证邮件','success'); elements.registerFormElement.reset(); switchToLogin();
+        
+        // 注册成功，检查是否需要邮箱验证
+        if (data.user) {
+            // 创建用户资料记录
+            try {
+                await supabaseClient.from('GameTogether').insert([{ 
+                    id: data.user.id, 
+                    email: email, 
+                    is_member: false, 
+                    created_at: getCurrentTimestamp() 
+                }]);
+            } catch (dbError) {
+                // 如果资料表插入失败，不影响注册流程（可能是重复插入）
+                console.warn('创建用户资料失败:', dbError);
+            }
+            
+            showToast('注册成功！请查收验证邮件并登录', 'success');
+            elements.registerFormElement.reset();
+            switchToLogin();
+        } else {
+            // 理论上不应该走到这里
+            showToast('注册成功，请登录', 'success');
+            switchToLogin();
+        }
+        
     } catch(err){ 
-        let msg = err.message;
-        if (msg.includes('User already registered')) msg = '该邮箱已被注册';
-        showToast(msg,'error'); 
+        console.error('注册异常:', err);
+        showToast('注册失败，请稍后重试', 'error'); 
         shakeForm(elements.registerFormElement);
+    } finally{ 
+        setButtonLoading(elements.registerSubmit, elements.registerLoading, false, '注册'); 
     }
-    finally{ setButtonLoading(elements.registerSubmit, elements.registerLoading, false, '注册'); }
 }
 
 // 全局下载/访问检查（供 main.js 调用）
