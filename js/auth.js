@@ -1,7 +1,6 @@
 /**
  * 认证模块 - 处理用户登录、注册、密码修改、会员系统等功能
- * 已修复自动登录问题：登录后刷新自动保持登录，退出后才清除会话
- * 已修复注册误报问题：移除不可靠的邮箱预检查，让 Supabase 直接返回正确错误
+ * 修复：移除手动插入 GameTogether 表的代码，完全依赖数据库触发器自动创建用户资料
  */
 
 const SUPABASE_URL = 'https://szeedpcuharbupkjrnob.supabase.co';
@@ -70,7 +69,6 @@ function forceClearSession() {
     const projectRef = SUPABASE_URL.split('//')[1].split('.')[0];
     localStorage.removeItem(`sb-${projectRef}-auth-token`);
     sessionStorage.removeItem(`sb-${projectRef}-auth-token`);
-    // 清除所有可能包含 supabase 的键
     const keysToRemove = [];
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
@@ -239,7 +237,7 @@ async function fetchUserProfile() {
     } catch(e) { currentUserProfile = { is_member: false }; }
 }
 
-// 检查登录状态（自动恢复会话，不清除存储）
+// 检查登录状态
 async function checkAuthStatus() {
     if (!supabaseClient) { updateUIForLoggedOutUser(); return; }
     const { data: { session }, error } = await supabaseClient.auth.getSession();
@@ -276,6 +274,8 @@ async function handleLogin(e){
     finally{ setButtonLoading(elements.loginSubmit, elements.loginLoading, false, '登录'); }
 }
 
+// ========== 修复后的 handleRegister ==========
+// 完全移除手动插入 GameTogether 表的代码，让数据库触发器自动处理
 async function handleRegister(e){
     e.preventDefault();
     if (!supabaseClient) { showToast('系统离线','error'); return; }
@@ -284,7 +284,6 @@ async function handleRegister(e){
     const pwd = elements.registerPassword.value;
     const confirm = elements.registerConfirmPassword.value;
     
-    // 前端验证
     if(pwd !== confirm){ 
         showToast('两次密码不一致','error'); 
         shakeForm(elements.registerFormElement); 
@@ -303,55 +302,33 @@ async function handleRegister(e){
     setButtonLoading(elements.registerSubmit, elements.registerLoading, true, '注册');
     
     try {
-        // 直接调用 Supabase 注册，让它返回正确的错误信息
-        const { data, error } = await supabaseClient.auth.signUp({ 
+        // 只调用 Supabase 注册，不进行任何额外插入
+        const { error } = await supabaseClient.auth.signUp({ 
             email: email, 
             password: pwd
         });
         
-        // 处理注册错误
-        if(error) {
+        if (error) {
             let errorMsg = error.message;
-            
-            // 用户友好的错误提示
-            if (errorMsg.includes('User already registered')) {
-                errorMsg = '该邮箱已被注册，请直接登录';
+            if (errorMsg.includes('already registered')) {
+                errorMsg = '该邮箱已注册，请直接登录';
+                switchToLogin(); // 自动切换到登录界面
+            } else if (errorMsg.includes('rate limit')) {
+                errorMsg = '操作过于频繁，请稍后再试';
             } else if (errorMsg.includes('Password should be at least 6 characters')) {
                 errorMsg = '密码长度至少需要6位';
             } else if (errorMsg.includes('Invalid email')) {
                 errorMsg = '邮箱格式不正确，请输入有效的邮箱地址';
-            } else if (errorMsg.includes('rate limit')) {
-                errorMsg = '操作过于频繁，请稍后再试';
             }
-            
             showToast(errorMsg, 'error');
             shakeForm(elements.registerFormElement);
             return;
         }
         
-        // 注册成功，检查是否需要邮箱验证
-        if (data.user) {
-            // 创建用户资料记录
-            try {
-                await supabaseClient.from('GameTogether').insert([{ 
-                    id: data.user.id, 
-                    email: email, 
-                    is_member: false, 
-                    created_at: getCurrentTimestamp() 
-                }]);
-            } catch (dbError) {
-                // 如果资料表插入失败，不影响注册流程（可能是重复插入）
-                console.warn('创建用户资料失败:', dbError);
-            }
-            
-            showToast('注册成功！请查收验证邮件并登录', 'success');
-            elements.registerFormElement.reset();
-            switchToLogin();
-        } else {
-            // 理论上不应该走到这里
-            showToast('注册成功，请登录', 'success');
-            switchToLogin();
-        }
+        // 注册成功（数据库触发器会自动创建 GameTogether 记录）
+        showToast('注册成功！请查收验证邮件并登录', 'success');
+        elements.registerFormElement.reset();
+        switchToLogin(); // 自动切换到登录界面
         
     } catch(err){ 
         console.error('注册异常:', err);
@@ -361,8 +338,9 @@ async function handleRegister(e){
         setButtonLoading(elements.registerSubmit, elements.registerLoading, false, '注册'); 
     }
 }
+// ========== 修复结束 ==========
 
-// 全局下载/访问检查（供 main.js 调用）
+// 全局下载/访问检查
 window.checkMemberAndAccess = function() {
     if(!currentUser){ showToast('请先登录','warning'); openAuthModal(); return false; }
     if(!currentUserProfile?.is_member){ openMemberRequiredModal(); return false; }
