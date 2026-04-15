@@ -101,7 +101,7 @@
   {
     "id": 8,
     "title": "ENCOUNTER BAR 2",
-    "coverImage": "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/ENCOUNTERBAR21.webp",
+    "coverImage": "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/ENCOUNTERBAR1.webp",
     "tags": ["Unity"],
     "previewImages": [
       "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/ENCOUNTERBAR23.webp",
@@ -1104,5 +1104,161 @@
     ],
     "quarkLink": "https://pan.quark.cn/s/c0fc3e803c2b",
     "thunderLink": "https://pan.xunlei.com/s/VOpcOlK6Z6TEtL6xrJ6j1YVfA1?pwd=ch8d#"
+   },
+  {
+    "id": 81,
+    "title": "Hack & Tease",
+    "coverImage": "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/HackTease1.webp",
+    "tags": ["Unity"],
+    "previewImages": [
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/HackTease2.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/HackTease3.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/HackTease4.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/HackTease5.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/HackTease6.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/HackTease7.webp"
+    ],
+    "quarkLink": "https://pan.quark.cn/s/6d8c8c3e4f69",
+    "thunderLink": "https://pan.xunlei.com/s/VOq1WxC611L0LOsSeo2XTEW_A1?pwd=iyt3#"
+   },
+  {
+    "id": 82,
+    "title": "My Happy Life",
+    "coverImage": "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MHL1.webp",
+    "tags": ["Unity"],
+    "previewImages": [
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MHL2.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MHL3.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MHL4.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MHL5.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MHL6.webp"
+    ],
+    "quarkLink": "https://pan.quark.cn/s/52e0bc6a0187",
+    "thunderLink": "https://pan.xunlei.com/s/VOq1X90eVslCg0QCQSBjFFaYA1?pwd=6qnh#"
+   },
+  {
+    "id": 83,
+    "title": "Runaway Home: Mili and Chocolate",
+    "coverImage": "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/RHMAC1.webp",
+    "tags": ["Unity"],
+    "previewImages": [
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/RHMAC2.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/RHMAC3.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/RHMAC4.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/RHMAC5.webp"
+    ],
+    "quarkLink": "https://pan.quark.cn/s/ba9b87815bb7",
+    "thunderLink": "https://pan.xunlei.com/s/VOq1XC3uQ8QXggbwdgzF-E_OA1?pwd=9wwp#"
+   },
+  {
+    "id": 84,
+    "title": "Making*Lovers – First Blush",
+    "coverImage": "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MFB1.webp",
+    "tags": ["其它"],
+    "previewImages": [
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MFB2.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MFB3.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MFB4.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MFB5.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MFB6.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MFB7.webp"
+    ],
+    "quarkLink": "https://pan.quark.cn/s/d86c2f746476",
+    "thunderLink": "https://pan.xunlei.com/s/VOq1XHMEYHhPdWoLzMcdoBCCA1?pwd=7k2w#"
+   },
+  {
+    "id": 85,
+    "title": "Welcome to the Adventurer",
+    "coverImage": "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/WTTA5.webp",
+    "tags": ["RPG"],
+    "previewImages": [
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/WTTA1.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/WTTA2.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/WTTA3.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/WTTA4.webp"
+    ],
+    "quarkLink": "https://pan.quark.cn/s/e3693613ed7b",
+    "thunderLink": "https://pan.xunlei.com/s/VOqAiICCl59AgGkYLfUcUkLRA1?pwd=dewh#"
+   },
+  {
+    "id": 86,
+    "title": "My Waifus Stream is Going Viral",
+    "coverImage": "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MWSIGV4.webp",
+    "tags": ["视觉小说"],
+    "previewImages": [
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MWSIGV1.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MWSIGV2.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MWSIGV3.webp"
+    ],
+    "quarkLink": "https://pan.quark.cn/s/85a0584a4a8f",
+    "thunderLink": "https://pan.xunlei.com/s/VOqAjGrDsZn0WOblcPn64chMA1?pwd=c8f6#"
+   },
+  {
+    "id": 87,
+    "title": "Forbidden Thoughts",
+    "coverImage": "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/FT4.webp",
+    "tags": ["视觉小说"],
+    "previewImages": [
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/FT1.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/FT2.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/FT3.webp"
+    ],
+    "quarkLink": "https://pan.quark.cn/s/d1df45509683",
+    "thunderLink": "https://pan.xunlei.com/s/VOqAkBEahHUUfO1jreMjFQz3A1?pwd=eet2#"
+   },
+  {
+    "id": 88,
+    "title": "My Horny Roomies",
+    "coverImage": "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MHR5.webp",
+    "tags": ["视觉小说"],
+    "previewImages": [
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MHR1.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MHR2.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MHR3.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/MHR4.webp"
+    ],
+    "quarkLink": "https://pan.quark.cn/s/45c44090618a",
+    "thunderLink": "https://pan.xunlei.com/s/VOqBTc6fvqhu7mr72WwK7M24A1?pwd=keye#"
+   },
+  {
+    "id": 89,
+    "title": "IRYS",
+    "coverImage": "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/I4.webp",
+    "tags": ["视觉小说"],
+    "previewImages": [
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/I1.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/I2.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/I3.webp"
+    ],
+    "quarkLink": "https://pan.quark.cn/s/90d0c7e4bcb1",
+    "thunderLink": "https://pan.xunlei.com/s/VOqBWiLGhHUUfO1jreMjsBA8A1?pwd=nbpt#"
+   },
+  {
+    "id": 90,
+    "title": "Love Challenge",
+    "coverImage": "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/LC4.webp",
+    "tags": ["视觉小说"],
+    "previewImages": [
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/LC1.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/LC2.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/LC3.webp"
+    ],
+    "quarkLink": "https://pan.quark.cn/s/4de6f05fb0ea",
+    "thunderLink": "https://pan.xunlei.com/s/VOqBa9__HWCBSk30tdVtJsuXA1?pwd=9r9u#"
+   },
+  {
+    "id": 91,
+    "title": "SQUAD XXX: Slut Hunt",
+    "coverImage": "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/SXSH6.webp",
+    "tags": ["Unity"],
+    "previewImages": [
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/SXSH1.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/SXSH2.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/SXSH3.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/SXSH4.webp",
+      "https://pub-1f2ba50106ed4026bd217cd777924d22.r2.dev/SXSH5.webp"
+    ],
+    "quarkLink": "https://pan.quark.cn/s/8b488e7a82a7",
+    "thunderLink": "https://pan.xunlei.com/s/VOqBdaAXex-RZ1E0UJlDlimzA1?pwd=a8q5#"
    }
 ]
