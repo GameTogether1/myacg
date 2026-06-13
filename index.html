@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>一块ACG - GameTogether</title>
+    <title>外网ACG - GameTogether</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -65,7 +65,8 @@
     </nav>
 
     <main class="container mx-auto px-4 py-8">
-        <div class="flex flex-wrap gap-3 mb-8 justify-center" id="tag-filters">
+        <!-- 标签筛选 -->
+        <div class="flex flex-wrap gap-3 mb-6 justify-center" id="tag-filters">
             <button class="tag-pill active px-4 py-2 rounded-full bg-primary text-white" data-tag="all">全部游戏</button>
             <button class="tag-pill px-4 py-2 rounded-full bg-dark-lighter text-white hover:bg-primary transition-colors" data-tag="搜集">搜集</button>
             <button class="tag-pill px-4 py-2 rounded-full bg-dark-lighter text-white hover:bg-primary transition-colors" data-tag="视觉小说">视觉小说</button>
@@ -75,7 +76,27 @@
             <button class="tag-pill px-4 py-2 rounded-full bg-dark-lighter text-white hover:bg-primary transition-colors" data-tag="其它">其它</button>
         </div>
 
-        <!-- 注意：这里不再使用 columns 类，改为普通块容器，用于纵向堆叠批次 -->
+        <!-- 新增搜索框区域 -->
+        <div class="max-w-2xl mx-auto mb-8">
+            <div class="relative flex items-center gap-2">
+                <div class="relative flex-1">
+                    <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="search-input" placeholder="搜索游戏名称..." 
+                           class="w-full pl-10 pr-10 py-3 rounded-xl bg-dark-light/80 border border-gray-700 focus:border-neon-blue focus:outline-none transition-all">
+                    <button id="search-clear" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white hidden">
+                        <i class="fa fa-times-circle"></i>
+                    </button>
+                </div>
+                <button id="search-btn" class="px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition font-medium">
+                    <i class="fa fa-search mr-1"></i> 搜索
+                </button>
+            </div>
+            <div id="search-result-info" class="text-sm text-gray-400 mt-2 text-center hidden">
+                <span id="search-result-count"></span> 个结果
+            </div>
+        </div>
+
+        <!-- 游戏网格容器 -->
         <div id="gamesGrid" class="games-grid-container"></div>
 
         <div class="flex justify-center mt-12">
@@ -85,7 +106,7 @@
         </div>
     </main>
 
-    <!-- 其余模态框和弹窗保持不变，省略避免重复 -->
+    <!-- 游戏详情模态框 -->
     <div id="gameModal" class="fixed inset-0 z-50 hidden">
         <div class="modal-backdrop absolute inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center p-4">
             <div class="bg-dark-light rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
@@ -107,8 +128,10 @@
         </div>
     </div>
 
+    <!-- Toast 通知容器 -->
     <div id="toast-container" class="fixed top-20 right-4 z-[9999] flex flex-col gap-2"></div>
 
+    <!-- 认证模态框 -->
     <div id="auth-modal" class="fixed inset-0 z-[60] hidden">
         <div id="auth-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity opacity-0"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
