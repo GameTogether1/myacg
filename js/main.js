@@ -226,11 +226,25 @@ function createGameCard(game) {
 function openGameModal(game) {
     currentGame = game;
     currentPreviewIndex = 0;
-    // 模态框标题仍然显示原有的 title（或可显示 titleCn/titleEn，但为保持一致性，仍用 title）
     modalTitle.innerText = game.titleCn;
     updatePreviewImage();
-    quarkLink.href = game.quarkLink;
-    thunderLink.href = game.thunderLink;
+    
+    // 控制夸克网盘按钮的显示
+    if (game.quarkLink && game.quarkLink.trim() !== '' && game.quarkLink !== '#') {
+        quarkLink.style.display = 'inline-flex';
+        quarkLink.href = game.quarkLink;
+    } else {
+        quarkLink.style.display = 'none';
+    }
+    
+    // 控制迅雷网盘按钮的显示
+    if (game.thunderLink && game.thunderLink.trim() !== '' && game.thunderLink !== '#') {
+        thunderLink.style.display = 'inline-flex';
+        thunderLink.href = game.thunderLink;
+    } else {
+        thunderLink.style.display = 'none';
+    }
+    
     gameModal.classList.remove('hidden');
     setTimeout(() => {
         modalContent.classList.remove('scale-95', 'opacity-0');
