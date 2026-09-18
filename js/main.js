@@ -6,11 +6,9 @@ const gamesPerBatch = 20;       // 每批游戏数量
 let currentTag = 'all';
 let currentGame = null;
 let currentPreviewIndex = 0;
-
 // 搜索相关变量
 let currentSearchKeyword = '';   // 当前搜索关键词
 let isSearchMode = false;         // 是否处于搜索模式
-
 const gamesGrid = document.getElementById('gamesGrid');
 const loadMoreBtn = document.getElementById('loadMoreBtn');
 const tagButtons = document.querySelectorAll('.tag-pill');
@@ -24,7 +22,6 @@ const nextImageBtn = document.getElementById('nextImage');
 const imageCounter = document.getElementById('imageCounter');
 const quarkLink = document.getElementById('quark-link');
 const thunderLink = document.getElementById('thunder-link');
-
 // 搜索相关 DOM 元素
 const searchInput = document.getElementById('search-input');
 const searchBtn = document.getElementById('search-btn');
@@ -32,11 +29,48 @@ const searchClear = document.getElementById('search-clear');
 const searchResultInfo = document.getElementById('search-result-info');
 const searchResultCount = document.getElementById('search-result-count');
 
+// ==========【新增】打开夸克二维码弹窗 ==========
+window.openQuarkQrModal = function(link) {
+    // 如果弹窗已经存在先移除旧弹窗
+    const oldModal = document.querySelector('.quark-modal-overlay');
+    if(oldModal) oldModal.remove();
+
+    const overlayDiv = document.createElement('div');
+    overlayDiv.className = 'quark-modal-overlay';
+
+    overlayDiv.innerHTML = `
+        <div class="quark-modal">
+            <h3 class="quark-modal-title">手机扫码保存资源</h3>
+            <p class="quark-modal-subtitle">建议先在夸克网盘 App 内保存资源，再在电脑端下载。</p>
+            <div class="quark-qr-wrap">
+                <canvas id="quark-qrcode-canvas"></canvas>
+            </div>
+            <button id="quark-modal-close-btn">关闭</button>
+        </div>
+    `;
+    document.body.appendChild(overlayDiv);
+
+    const closeFunc = () => { overlayDiv.remove(); };
+    overlayDiv.addEventListener('click', closeFunc);
+    overlayDiv.querySelector('.quark-modal').addEventListener('click', (e)=> e.stopPropagation());
+    overlayDiv.querySelector('#quark-modal-close-btn').addEventListener('click', closeFunc);
+
+    // 渲染二维码
+    setTimeout(()=>{
+        const canvas = document.getElementById('quark-qrcode-canvas');
+        if(window.QRCode && canvas){
+            window.QRCode.toCanvas(canvas, link, {width:220}, (err)=>{
+                if(err) console.error('二维码生成失败', err);
+            })
+        }
+    }, 60);
+};
+// ==========【新增结束】 ==========
+
 // 按 id 降序排序（大 id 在前）
 function sortGamesByIdDesc(games) {
     return [...games].sort((a, b) => b.id - a.id);
 }
-
 // 加载游戏数据
 async function loadGamesData() {
     try {
@@ -52,7 +86,6 @@ async function loadGamesData() {
     // 初始显示全部游戏（标签筛选）
     applyFilterAndRender();
 }
-
 // 核心：根据当前标签或搜索词刷新游戏列表并重新渲染
 function applyFilterAndRender() {
     loadedBatches = 0;
@@ -110,7 +143,6 @@ function applyFilterAndRender() {
     // 重新加载第一批
     loadMore();
 }
-
 // 执行搜索（由搜索按钮或输入框触发）
 function performSearch() {
     const keyword = searchInput ? searchInput.value.trim() : '';
@@ -125,7 +157,6 @@ function performSearch() {
     currentSearchKeyword = keyword;
     applyFilterAndRender();
 }
-
 // 退出搜索模式，恢复到标签筛选
 function exitSearchMode() {
     if (searchInput) searchInput.value = '';
@@ -134,7 +165,6 @@ function exitSearchMode() {
     currentSearchKeyword = '';
     applyFilterAndRender();
 }
-
 // 创建一批游戏的瀑布流容器
 function createBatchContainer() {
     const batchDiv = document.createElement('div');
@@ -150,7 +180,6 @@ function createBatchContainer() {
     window.addEventListener('resize', updateColumns);
     return batchDiv;
 }
-
 // 将一批游戏卡片添加到指定的 batch 容器中
 function addGamesToBatch(batchContainer, games) {
     games.forEach(game => {
@@ -158,7 +187,6 @@ function addGamesToBatch(batchContainer, games) {
         batchContainer.appendChild(card);
     });
 }
-
 // 加载更多：每次加载一批（gamesPerBatch 条）
 function loadMore() {
     if (!filteredGames.length) {
@@ -166,28 +194,23 @@ function loadMore() {
         loadMoreBtn.style.display = 'none';
         return;
     }
-
     const start = loadedBatches * gamesPerBatch;
     const end = Math.min(filteredGames.length, start + gamesPerBatch);
     if (start >= filteredGames.length) {
         loadMoreBtn.style.display = 'none';
         return;
     }
-
     const newGames = filteredGames.slice(start, end);
     const batchContainer = createBatchContainer();
     addGamesToBatch(batchContainer, newGames);
     gamesGrid.appendChild(batchContainer);
-
     loadedBatches++;
-
     if (end >= filteredGames.length) {
         loadMoreBtn.style.display = 'none';
     } else {
         loadMoreBtn.style.display = 'flex';
     }
 }
-
 // 创建单个游戏卡片
 // 显示规则：如果存在 titleCn 和 titleEn，则分行显示（中文在上，英文在下，英文小字灰色）
 // 否则，使用原有的 title 字段单行显示（样式完全不变）
@@ -222,7 +245,7 @@ function createGameCard(game) {
     return card;
 }
 
-// 打开游戏详情
+// 打开游戏详情【重点修改这里！quarkLink不再设置href，改为点击事件调用弹窗】
 function openGameModal(game) {
     currentGame = game;
     currentPreviewIndex = 0;
@@ -232,15 +255,21 @@ function openGameModal(game) {
     // 控制夸克网盘按钮的显示
     if (game.quarkLink && game.quarkLink.trim() !== '' && game.quarkLink !== '#') {
         quarkLink.style.display = 'inline-flex';
-        quarkLink.href = game.quarkLink;
+        quarkLink.removeAttribute('href'); // 移除跳转链接，不再新标签页打开
+        quarkLink.onclick = function(e) {
+            e.preventDefault();
+            window.openQuarkQrModal(game.quarkLink);
+        }
     } else {
         quarkLink.style.display = 'none';
+        quarkLink.onclick = null;
     }
     
-    // 控制迅雷网盘按钮的显示
+    // 控制迅雷网盘按钮的显示【迅雷保持原样，继续跳转新标签页】
     if (game.thunderLink && game.thunderLink.trim() !== '' && game.thunderLink !== '#') {
         thunderLink.style.display = 'inline-flex';
         thunderLink.href = game.thunderLink;
+        thunderLink.target = "_blank";
     } else {
         thunderLink.style.display = 'none';
     }
@@ -263,7 +292,6 @@ function updatePreviewImage() {
     prevImageBtn.style.pointerEvents = prevDisabled ? 'none' : 'auto';
     nextImageBtn.style.pointerEvents = nextDisabled ? 'none' : 'auto';
 }
-
 function prevImage() { if (currentPreviewIndex > 0) { currentPreviewIndex--; updatePreviewImage(); } }
 function nextImage() { if (currentGame && currentPreviewIndex < currentGame.previewImages.length - 1) { currentPreviewIndex++; updatePreviewImage(); } }
 function closeGameModal() {
@@ -271,7 +299,6 @@ function closeGameModal() {
     modalContent.classList.add('scale-95', 'opacity-0');
     setTimeout(() => gameModal.classList.add('hidden'), 300);
 }
-
 // 标签筛选（点击标签时，退出搜索模式并应用标签）
 function filterByTag(tag) {
     // 如果处于搜索模式，先退出搜索
@@ -281,7 +308,6 @@ function filterByTag(tag) {
     currentTag = tag;
     applyFilterAndRender();
 }
-
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, function (m) {
@@ -291,7 +317,6 @@ function escapeHtml(str) {
         return m;
     });
 }
-
 // 搜索输入框的实时响应（防抖 + 自动搜索）
 let searchDebounceTimer;
 function setupSearchEvents() {
@@ -337,7 +362,6 @@ function setupSearchEvents() {
         }
     });
 }
-
 // 事件绑定
 function initEvents() {
     loadMoreBtn?.addEventListener('click', loadMore);
@@ -360,11 +384,9 @@ function initEvents() {
     // 搜索相关事件
     setupSearchEvents();
 }
-
 // 启动
 function init() {
     initEvents();
     loadGamesData();
 }
-
 init();
