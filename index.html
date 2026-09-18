@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+    <!-- 新增 qrcode 库，用于夸克网盘二维码生成 -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -47,9 +49,7 @@
     </script>
 </head>
 <body class="bg-dark text-white font-sans antialiased">
-
     <div class="bg-animation"><div class="gradient"></div><div class="dots"></div></div>
-
     <nav class="bg-dark-light bg-opacity-80 sticky top-0 z-50 border-b border-dark-lighter backdrop-blur-md">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-2">
@@ -63,7 +63,6 @@
             </div>
         </div>
     </nav>
-
     <main class="container mx-auto px-4 py-8">
         <!-- 标签筛选 -->
         <div class="flex flex-wrap gap-3 mb-6 justify-center" id="tag-filters">
@@ -75,7 +74,6 @@
             <button class="tag-pill px-4 py-2 rounded-full bg-dark-lighter text-white hover:bg-primary transition-colors" data-tag="RPG">RPG</button>
             <button class="tag-pill px-4 py-2 rounded-full bg-dark-lighter text-white hover:bg-primary transition-colors" data-tag="其它">其它</button>
         </div>
-
         <!-- 新增搜索框区域 -->
         <div class="max-w-2xl mx-auto mb-8">
             <div class="relative flex items-center gap-2">
@@ -95,17 +93,14 @@
                 <span id="search-result-count"></span> 个结果
             </div>
         </div>
-
         <!-- 游戏网格容器 -->
         <div id="gamesGrid" class="games-grid-container"></div>
-
         <div class="flex justify-center mt-12">
             <button id="loadMoreBtn" class="px-8 py-3 rounded-full bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-accent transition-all duration-300 flex items-center space-x-2 transform hover:scale-105 shadow-lg">
                 <i class="fa fa-refresh"></i><span>加载更多游戏</span>
             </button>
         </div>
     </main>
-
     <!-- 游戏详情模态框 -->
     <div id="gameModal" class="fixed inset-0 z-50 hidden">
         <div class="modal-backdrop absolute inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center p-4">
@@ -127,10 +122,21 @@
             </div>
         </div>
     </div>
-
+    <!-- 夸克二维码弹窗DOM -->
+    <div id="quark-qrcode-modal" class="fixed inset-0 z-[9999] hidden">
+        <div class="quark-modal-overlay absolute inset-0 bg-black/75 flex items-center justify-center p-4">
+            <div class="quark-modal bg-[#2c2c40] p-7 rounded-2xl w-[90%] max-w-[440px] border border-[#444] text-center">
+                <h3 class="quark-modal-title text-[22px] mt-0 mb-2">手机扫码保存资源</h3>
+                <p class="quark-modal-subtitle text-[12px] opacity-75 m-0 mb-6 whitespace-nowrap overflow-hidden text-ellipsis">建议先在夸克网盘 App 内保存资源，再在电脑端下载。</p>
+                <div class="quark-qr-wrap flex justify-center mb-6">
+                    <canvas id="quark-qrcode-canvas"></canvas>
+                </div>
+                <button id="quark-modal-close-btn" class="w-full py-[11px] bg-[#6c5ce7] hover:bg-[#5b4cdb] text-white border-none rounded-lg cursor-pointer text-base">关闭</button>
+            </div>
+        </div>
+    </div>
     <!-- Toast 通知容器 -->
     <div id="toast-container" class="fixed top-20 right-4 z-[9999] flex flex-col gap-2"></div>
-
     <!-- 认证模态框 -->
     <div id="auth-modal" class="fixed inset-0 z-[60] hidden">
         <div id="auth-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity opacity-0"></div>
@@ -165,7 +171,6 @@
             </div>
         </div>
     </div>
-
     <script src="js/auth.js"></script>
     <script src="js/main.js"></script>
 </body>
