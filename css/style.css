@@ -167,3 +167,55 @@
 .waterfall-batch:last-child {
     margin-bottom: 0;
 }
+
+
+/* 夸克二维码弹窗样式，和React版本完全一致 */
+.quark-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.quark-modal {
+  background: #2c2c40;
+  color: #fff;
+  padding: 32px;
+  border-radius: 16px;
+  max-width: 440px;
+  width: 90%;
+  border: 1px solid #444;
+  text-align: center;
+}
+.quark-modal-title {
+  font-size: 22px;
+  margin: 0 0 8px;
+}
+.quark-modal-subtitle {
+  font-size: 12px;
+  opacity: 0.75;
+  margin: 0 0 24px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.quark-qr-wrap {
+  display:flex;
+  justify-content:center;
+  margin-bottom:24px;
+}
+.quark-modal button {
+  width:100%;
+  padding:11px;
+  background:#6c5ce7;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:16px;
+}
+.quark-modal button:hover {
+  background:#5b4cdb;
+}
